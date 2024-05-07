@@ -124,20 +124,20 @@ if __name__ == "__main__":
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
     try:
-        # for language in programming_languages:
-        #     predict_rub_salary_for_super_job(language, secret_key_super_job)
-        # title_sj = "SuperJob (Moscow)"
-        # table = generate_tables(STATISTICS_VACANCIES_SJ)
-        # table_statistics = DoubleTable(table, title_sj)
-        # print(table_statistics.table)
+        for language in programming_languages:
+            predict_rub_salary_for_super_job(language, secret_key_super_job)
+        title_sj = "SuperJob (Moscow)"
+        table = generate_tables(STATISTICS_VACANCIES_SJ)
+        table_statistics = DoubleTable(table, title_sj)
+        print(table_statistics.table)
         for language in programming_languages:
             predict_rub_salary_for_hh(language, secret_key_hh)
         print(predict_rub_salary_for_hh)
-        # TABLE_DATA_VACANCIES.clear()
-        # title_hh = "HeadHunter (Moscow)"
-        # table = generate_tables(STATISTICS_VACANCIES_HH)
-        # table_statistics = DoubleTable(table, title_hh)
-        # print(table_statistics.table)
+        TABLE_DATA_VACANCIES.clear()
+        title_hh = "HeadHunter (Moscow)"
+        table = generate_tables(STATISTICS_VACANCIES_HH)
+        table_statistics = DoubleTable(table, title_hh)
+        print(table_statistics.table)
     except requests.exceptions.RequestException as err:
         print(f'Что то не так!\n {err}')
 
