@@ -15,11 +15,9 @@ def predict_rub_salary(min_salary, max_salary):
 
 
 def checking_division_by_zero(first_number, second_number):
-    try:
+    with suppress(ZeroDivisionError):
         result = int(first_number / second_number)
         return result
-    except ZeroDivisionError:
-        pass
 
 
 def predict_rub_salary_for_hh(language, hh_token, city_id):
@@ -41,7 +39,7 @@ def predict_rub_salary_for_hh(language, hh_token, city_id):
     while page < pages:
         page += 1
         for vacancy in vacancies:
-            try:
+            with suppress(TypeError):
                 if vacancy['salary']['currency'] == 'RUR':
                     min_salary = vacancy['salary']['from']
                     max_salary = vacancy['salary']['to']
@@ -49,9 +47,7 @@ def predict_rub_salary_for_hh(language, hh_token, city_id):
                         average_salary.append(predict_rub_salary(min_salary, max_salary))
                         relevant_vacancies += 1
                 else:
-                    pass 
-            except TypeError:
-                pass
+                    pass
     vacancies_info = {
         'vacancies_processed': relevant_vacancies,
         'average_salary': checking_division_by_zero(sum(average_salary), len(average_salary)),
