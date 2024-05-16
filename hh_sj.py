@@ -34,8 +34,9 @@ def predict_rub_salary_for_hh(language, hh_token, city_id):
     }
     response = requests.get(hh_address, params=payload)
     relevant_vacancies = 0
-    vacancies = response.json()['items']
-    pages = response.json()['pages']
+    resp_json = response.json()
+    vacancies = resp_json['items']
+    pages = resp_json['pages']
     page = 0
     while page < pages:
         page += 1
@@ -73,14 +74,15 @@ def predict_rub_salary_for_super_job(language, super_job_token, city_id):
     }
     response = requests.get(url, headers=headers, params=payload)
     response.raise_for_status()
-    vacancies_total = response.json()['total']
+    resp_json = response.json()
+    vacancies_total = resp_json['total']
     vacancies_on_page = 20
     pages = math.ceil(vacancies_total / vacancies_on_page)
     relevant_vacancies = 0
     page = 0
     while page < pages:
         page += 1
-        vacancies = response.json()['objects']
+        vacancies = resp_json['objects']
         for vacancy in vacancies:
             min_salary = vacancy['payment_from']
             max_salary = vacancy['payment_to']
