@@ -20,7 +20,7 @@ def checking_division_by_zero(first_number, second_number):
         return result
 
 
-def predict_rub_salary_for_hh(language, hh_token, city_id):
+def statistics_salary_for_hh(language, hh_token, city_id):
     hh_address = 'https://api.hh.ru/vacancies/'
     payload = {
         'text': language,
@@ -55,7 +55,7 @@ def predict_rub_salary_for_hh(language, hh_token, city_id):
     return statistics_vacancies_hh
 
 
-def predict_rub_salary_for_super_job(language, super_job_token, city_id):
+def statistics_salary_for_super_job(language, super_job_token, city_id):
     url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
     headers = {
         'X-Api-App-Id': super_job_token
