@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     try:
         for language in programming_languages:
-            predict_rub_salary_for_super_job(language, secret_key_super_job, city_id_for_sj)
+            statistics_salary_for_super_job(language, secret_key_super_job, city_id_for_sj)
     except requests.exceptions.HTTPError as http_err:
         print(f'Проверьте корректность ввода ключа API\n {http_err}')
     title_sj = "SuperJob (Moscow)"
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     try:
         for language in programming_languages:
-            predict_rub_salary_for_hh(language, secret_key_hh, city_id_for_hh)
+            statistics_salary_for_hh(language, secret_key_hh, city_id_for_hh)
     except requests.exceptions.HTTPError as http_err:
         print(f'Проверьте корректность ввода ключа API\n {http_err}')
     tabel_info_about_filtered_vacancies.clear()
