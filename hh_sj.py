@@ -86,7 +86,7 @@ def predict_rub_salary_for_super_job(language, super_job_token, city_id):
         for vacancy in vacancies:
             min_salary = vacancy['payment_from']
             max_salary = vacancy['payment_to']
-            if min_salary == 0 and max_salary == 0:
+            if not min_salary and not max_salary:
                 pass
             else:
                 average_salary.append(predict_rub_salary(min_salary, max_salary))
