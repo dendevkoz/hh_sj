@@ -46,8 +46,6 @@ def predict_rub_salary_for_hh(language, hh_token, city_id):
                     if min_salary and max_salary:
                         average_salary.append(predict_rub_salary(min_salary, max_salary))
                         relevant_vacancies += 1
-                else:
-                    pass
     vacancies_info = {
         'vacancies_processed': relevant_vacancies,
         'average_salary': checking_division_by_zero(sum(average_salary), len(average_salary)),
