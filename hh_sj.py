@@ -58,6 +58,25 @@ def statistics_salary_for_hh(language, hh_token, city_id):
     return statistics_vacancies_hh
 
 
+def get_sj_page(language, super_job_token, page, town):
+    url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
+    headers = {
+        'X-Api-App-Id': super_job_token
+    }
+
+    payload = {
+        'town': town,
+        'keyword': language,
+        'vacancies_filter': 'it-internet-svyaz-telekom',
+        'page': page,
+        'count': 5,
+    }
+    response = requests.get(url, headers=headers, params=payload)
+    response.raise_for_status()
+    vacancies_response = response.json()
+    return vacancies_response
+
+
 def statistics_salary_for_super_job(language, super_job_token, city_id):
     url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
     headers = {
