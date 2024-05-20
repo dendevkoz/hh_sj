@@ -20,7 +20,7 @@ def check_division_by_zero(first_number, second_number):
         return result
 
 
-def statistics_salary_for_hh(language, hh_token, city_id):
+def statistics_salary_for_hh(languages, hh_token, city_id):
     statistics_vacancies_hh = {}
     for language in languages:
         salaries = []
@@ -77,7 +77,7 @@ def get_sj_page(language, super_job_token, page, town):
     return vacancies_response
 
 
-def statistics_salary_for_super_job(language, super_job_token, city_id):
+def statistics_salary_for_super_job(languages, super_job_token, city_id):
     statistics_vacancies_sj = {}
     vacancies_limit = 500
     vacancies_on_page = 5
