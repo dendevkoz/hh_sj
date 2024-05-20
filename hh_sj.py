@@ -114,6 +114,7 @@ def statistics_salary_for_super_job(language, super_job_token, city_id):
 
 
 def generate_table(statistics_vacancies):
+    tabel_info_about_filtered_vacancies = list()
     tabel_info_about_filtered_vacancies.append(('Язык программирования',
                                                 'Вакансий найдено',
                                                 'Вакансий обработано',
