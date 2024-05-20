@@ -21,37 +21,40 @@ def checking_division_by_zero(first_number, second_number):
 
 
 def statistics_salary_for_hh(language, hh_token, city_id):
-    hh_address = 'https://api.hh.ru/vacancies/'
-    payload = {
-        'text': language,
-        'area': city_id,
-        'period': '30',
-        'salary.from': 'true',
-        'salary.to': 'true',
-        'api_key': hh_token,
-    }
-    response = requests.get(hh_address, params=payload)
-    relevant_vacancies = 0
-    resp_json = response.json()
-    vacancies = resp_json['items']
-    pages = resp_json['pages']
-    page = 0
-    while page < pages:
-        page += 1
-        for vacancy in vacancies:
-            with suppress(TypeError):
-                if vacancy['salary']['currency'] == 'RUR':
-                    min_salary = vacancy['salary']['from']
-                    max_salary = vacancy['salary']['to']
-                    if min_salary and max_salary:
-                        average_salary.append(predict_rub_salary(min_salary, max_salary))
-                        relevant_vacancies += 1
-    vacancies_info = {
-        'vacancies_processed': relevant_vacancies,
-        'average_salary': checking_division_by_zero(sum(average_salary), len(average_salary)),
-        'vacancies_found':  len(average_salary)
-    }
-    statistics_vacancies_hh[language] = vacancies_info
+    statistics_vacancies_hh = {}
+    for language in languages:
+        salaries = []
+        hh_address = 'https://api.hh.ru/vacancies/'
+        payload = {
+            'text': language,
+            'area': city_id,
+            'period': '30',
+            'api_key': hh_token,
+        }
+        response = requests.get(hh_address, params=payload)
+        resp_json = response.json()
+        vacancies = resp_json['items']
+        found = resp_json['found']
+        pages = resp_json['pages']
+        page = 0
+        vacancies_info = {
+            'vacancies_processed': '',
+            'average_salary': '',
+            'vacancies_found': '',
+        }
+        while page < pages:
+            page += 1
+            for vacancy in vacancies:
+                if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
+                    if vacancy['salary']['currency'] == 'RUR':
+                        min_salary = vacancy['salary']['from']
+                        max_salary = vacancy['salary']['to']
+                        salaries.append(predict_rub_salary(min_salary, max_salary))
+        vacancies_info['average_salary'] = check_division_by_zero(sum(salaries),
+                                                                     len(salaries))
+        vacancies_info['vacancies_processed'] = len(salaries)
+        vacancies_info['vacancies_found'] = found
+        statistics_vacancies_hh[language] = vacancies_info
     return statistics_vacancies_hh
 
 
@@ -116,10 +119,7 @@ if __name__ == "__main__":
     secret_key_super_job = os.getenv("SUPER_JOB_SECRET_KEY")
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
-    statistics_vacancies_sj = {}
-    statistics_vacancies_hh = {}
-    average_salary = []
-    tabel_info_about_filtered_vacancies = []
+
 
     try:
         for language in programming_languages:
@@ -131,15 +131,12 @@ if __name__ == "__main__":
     table_statistics = DoubleTable(table, title_sj)
     print(table_statistics.table)
 
-    try:
-        for language in programming_languages:
-            statistics_salary_for_hh(language, secret_key_hh, city_id_for_hh)
-    except requests.exceptions.HTTPError as http_err:
-        print(f'Проверьте корректность ввода ключа API\n {http_err}')
-    tabel_info_about_filtered_vacancies.clear()
+    all_statistics_for_hh = statistics_salary_for_hh(programming_languages,
+                                                     secret_key_hh,
+                                                     city_id_for_hh)
     title_hh = "HeadHunter (Moscow)"
-    table = generate_table(statistics_vacancies_hh)
+    table = generate_table(all_statistics_for_hh)
     table_statistics = DoubleTable(table, title_hh)
-    print(table_statistics.table)
+    print(all_statistics_for_hh.table)
 
 
