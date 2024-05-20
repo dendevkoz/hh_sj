@@ -78,42 +78,39 @@ def get_sj_page(language, super_job_token, page, town):
 
 
 def statistics_salary_for_super_job(language, super_job_token, city_id):
-    url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
-    headers = {
-        'X-Api-App-Id': super_job_token
-    }
+    statistics_vacancies_sj = {}
+    vacancies_limit = 500
+    vacancies_on_page = 5
+    stop_page = vacancies_limit / vacancies_on_page
 
-    payload = {
-        'city_id': city_id,
-        'keyword': language,
-        'vacancies_filter': 'it-internet-svyaz-telekom'
-    }
-    response = requests.get(url, headers=headers, params=payload)
-    response.raise_for_status()
-    resp_json = response.json()
-    vacancies_total = resp_json['total']
-    vacancies_on_page = 20
-    pages = math.ceil(vacancies_total / vacancies_on_page)
-    relevant_vacancies = 0
-    page = 0
-    while page < pages:
-        page += 1
-        vacancies = resp_json['objects']
-        for vacancy in vacancies:
-            min_salary = vacancy['payment_from']
-            max_salary = vacancy['payment_to']
-            if not min_salary and not max_salary:
-                pass
-            else:
-                average_salary.append(predict_rub_salary(min_salary, max_salary))
-                relevant_vacancies += 1
+    for language in languages:
         vacancies_info = {
-            'vacancies_processed': relevant_vacancies,
-            'average_salary': checking_division_by_zero(sum(average_salary), len(average_salary)),
-            'vacancies_found':  vacancies_total,
+            'vacancies_processed': '',
+            'average_salary': '',
+            'vacancies_found': '',
         }
+        salaries = []
+        for page in count():
+            vacancies_response_from_sj = get_sj_page(
+                language, super_job_token, page, city_id)
+            vacancies_total = vacancies_response_from_sj['total']
+            vacancies = vacancies_response_from_sj['objects']
+            for vacancy in vacancies:
+                min_salary = vacancy['payment_from']
+                max_salary = vacancy['payment_to']
+                if min_salary and max_salary:
+                     salaries.append(predict_rub_salary(min_salary, max_salary))
+            if page >= vacancies_response_from_sj['total']//vacancies_on_page:
+                break
+            elif page >= stop_page:
+                break
+            vacancies_info['average_salary'] = check_division_by_zero(sum(salaries),
+                                                                             len(salaries))
+        
+            vacancies_info['vacancies_found'] = vacancies_total
+        vacancies_info['vacancies_processed'] = len(salaries)
         statistics_vacancies_sj[language] = vacancies_info
-        return statistics_vacancies_sj
+    return statistics_vacancies_sj
 
 
 def generate_table(statistics_vacancies):
@@ -139,16 +136,13 @@ if __name__ == "__main__":
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
 
-
-    try:
-        for language in programming_languages:
-            statistics_salary_for_super_job(language, secret_key_super_job, city_id_for_sj)
-    except requests.exceptions.HTTPError as http_err:
-        print(f'Проверьте корректность ввода ключа API\n {http_err}')
+    all_statistics_for_sj = statistics_salary_for_super_job(programming_languages,
+                                                            secret_key_super_job,
+                                                            city_id_for_sj)
     title_sj = "SuperJob (Moscow)"
-    table = generate_table(statistics_vacancies_sj)
-    table_statistics = DoubleTable(table, title_sj)
-    print(table_statistics.table)
+    table = generate_table(all_statistics_for_sj)
+    table_statistics_sj = DoubleTable(table, title_sj)
+    print(table_statistics_sj.table)
 
     all_statistics_for_hh = statistics_salary_for_hh(programming_languages,
                                                      secret_key_hh,
