@@ -1,8 +1,8 @@
 import requests
 from dotenv import load_dotenv
 import os
-import math
 from terminaltables import DoubleTable
+from contextlib import suppress
 
 
 def predict_rub_salary(min_salary, max_salary):
