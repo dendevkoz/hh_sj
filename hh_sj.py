@@ -149,7 +149,7 @@ if __name__ == "__main__":
                                                      city_id_for_hh)
     title_hh = "HeadHunter (Moscow)"
     table = generate_table(all_statistics_for_hh)
-    table_statistics = DoubleTable(table, title_hh)
-    print(all_statistics_for_hh.table)
+    table_statistics_hh = DoubleTable(table, title_hh)
+    print(table_statistics_hh.table)
 
 
