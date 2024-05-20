@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from terminaltables import DoubleTable
 from contextlib import suppress
+from itertools import count
 
 
 def predict_rub_salary(min_salary, max_salary):
