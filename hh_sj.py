@@ -52,7 +52,7 @@ def statistics_salary_for_hh(languages, hh_token, city_id):
                         max_salary = vacancy['salary']['to']
                         salaries.append(predict_rub_salary(min_salary, max_salary))
         vacancies_info['average_salary'] = check_division_by_zero(sum(salaries),
-                                                                     len(salaries))
+                                                                  len(salaries))
         vacancies_info['vacancies_processed'] = len(salaries)
         vacancies_info['vacancies_found'] = found
         statistics_vacancies_hh[language] = vacancies_info
