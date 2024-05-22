@@ -37,6 +37,6 @@
     ```
 - Команда для запуска
     ```python
-      python3 main.py
+      python3 hh_sj.py
     ```
 
