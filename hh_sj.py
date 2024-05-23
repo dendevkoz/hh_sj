@@ -57,24 +57,6 @@ def statistics_salary_for_hh(languages, hh_token, city_id):
     return vacancies_statistics
 
 
-def get_sj_page(language, super_job_token, page, town):
-    url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
-    headers = {
-        'X-Api-App-Id': super_job_token
-    }
-
-    payload = {
-        'town': town,
-        'keyword': language,
-        'vacancies_filter': 'it-internet-svyaz-telekom',
-        'more': True,        
-    }
-    response = requests.get(url, headers=headers, params=payload)
-    response.raise_for_status()
-    vacancies_response = response.json()
-    return vacancies_response
-
-
 def get_statistics_for_all_languages_by_sj(languages, hh_token, city_id):
     statistics_vacancies_sj = {}
     for language in languages:
