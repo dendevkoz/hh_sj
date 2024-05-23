@@ -116,17 +116,17 @@ if __name__ == "__main__":
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
 
-    all_statistics_for_sj = statistics_salary_for_super_job(programming_languages,
-                                                            secret_key_super_job,
-                                                            city_id_for_sj)
+    all_statistics_for_sj = get_statistics_for_all_languages_by_sj(programming_languages,
+                                                                   secret_key_super_job,
+                                                                   city_id_for_sj)
     title_sj = "SuperJob (Moscow)"
     table = generate_table(all_statistics_for_sj)
     table_statistics_sj = DoubleTable(table, title_sj)
     print(table_statistics_sj.table)
 
-    all_statistics_for_hh = statistics_salary_for_hh(programming_languages,
-                                                     secret_key_hh,
-                                                     city_id_for_hh)
+    all_statistics_for_hh = get_statistics_for_all_languages_by_hh(programming_languages, 
+                                                                   secret_key_hh,
+                                                                   city_id_for_hh)
     title_hh = "HeadHunter (Moscow)"
     table = generate_table(all_statistics_for_hh)
     table_statistics_hh = DoubleTable(table, title_hh)
