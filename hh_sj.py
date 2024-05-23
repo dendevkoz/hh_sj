@@ -67,8 +67,7 @@ def get_sj_page(language, super_job_token, page, town):
         'town': town,
         'keyword': language,
         'vacancies_filter': 'it-internet-svyaz-telekom',
-        'page': page,
-        'count': 5,
+        'more': True,        
     }
     response = requests.get(url, headers=headers, params=payload)
     response.raise_for_status()
