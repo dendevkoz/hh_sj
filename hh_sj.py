@@ -96,20 +96,17 @@ def statistics_salary_for_super_job(languages, super_job_token, city_id):
 
 
 def generate_table(statistics_vacancies):
-    tabel_info_about_filtered_vacancies = list()
-    tabel_info_about_filtered_vacancies.append(('Язык программирования',
-                                                'Вакансий найдено',
-                                                'Вакансий обработано',
-                                                'Средняя зарплата'
-                                                ))
+    tabel_statistics_about_filtered_vacancies = list()
+    tabel_statistics_about_filtered_vacancies.append(('Язык программирования', 'Вакансий найдено',
+                                                      'Вакансий обработано', 'Средняя зарплата'))
 
     search_vacancies_info = statistics_vacancies.items()
     for language_for_table, statistic_vacancies_for_table in search_vacancies_info:
         row_table = (language_for_table, statistic_vacancies_for_table['vacancies_found'],
                      statistic_vacancies_for_table['vacancies_processed'],
                      statistic_vacancies_for_table['average_salary'])
-        tabel_info_about_filtered_vacancies.append(row_table)
-    return tabel_info_about_filtered_vacancies
+        tabel_statistics_about_filtered_vacancies.append(row_table)
+    return tabel_statistics_about_filtered_vacancies
 
 
 if __name__ == "__main__":
