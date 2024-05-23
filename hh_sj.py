@@ -75,6 +75,13 @@ def get_sj_page(language, super_job_token, page, town):
     return vacancies_response
 
 
+def get_statistics_for_all_languages_by_sj(languages, hh_token, city_id):
+    statistics_vacancies_sj = {}
+    for language in languages:
+        statistics_vacancies_sj[language] = statistics_salary_for_hh(language, hh_token, city_id)
+    return statistics_vacancies_sj
+
+
 def statistics_salary_for_super_job(languages, super_job_token, city_id):
     statistics_vacancies_sj = {}
     vacancies_limit = 500
