@@ -83,39 +83,34 @@ def get_statistics_for_all_languages_by_sj(languages, hh_token, city_id):
 
 
 def statistics_salary_for_super_job(languages, super_job_token, city_id):
-    statistics_vacancies_sj = {}
-    vacancies_limit = 500
-    vacancies_on_page = 5
-    stop_page = vacancies_limit / vacancies_on_page
-
-    for language in languages:
-        vacancies_info = {
-            'vacancies_processed': '',
-            'average_salary': '',
-            'vacancies_found': '',
-        }
-        salaries = []
-        for page in count():
-            vacancies_response_from_sj = get_sj_page(
-                language, super_job_token, page, city_id)
-            vacancies_total = vacancies_response_from_sj['total']
-            vacancies = vacancies_response_from_sj['objects']
-            for vacancy in vacancies:
-                min_salary = vacancy['payment_from']
-                max_salary = vacancy['payment_to']
-                if min_salary and max_salary:
-                     salaries.append(predict_rub_salary(min_salary, max_salary))
-            if page >= vacancies_response_from_sj['total']//vacancies_on_page:
-                break
-            elif page >= stop_page:
-                break
-            vacancies_info['average_salary'] = check_division_by_zero(sum(salaries),
-                                                                             len(salaries))
-        
-            vacancies_info['vacancies_found'] = vacancies_total
-        vacancies_info['vacancies_processed'] = len(salaries)
-        statistics_vacancies_sj[language] = vacancies_info
-    return statistics_vacancies_sj
+    salaries = []
+    url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
+    headers = {
+        'X-Api-App-Id': super_job_token
+    }
+    payload = {
+        'town': city_id,
+        'keyword': language,
+        'vacancies_filter': 'it-internet-svyaz-telekom',
+        'more': True,
+    }
+    response = requests.get(url, headers=headers, params=payload)
+    response.raise_for_status()
+    vacancies_response = response.json()
+    vacancies_total = vacancies_response['total']
+    if vacancies_response['more'] is True:
+        vacancies = vacancies_response['objects']
+        for vacancy in vacancies:
+            min_salary = vacancy['payment_from']
+            max_salary = vacancy['payment_to']
+            if min_salary and max_salary:
+                salaries.append(predict_rub_salary(min_salary, max_salary))
+    vacancies_statistics = {
+        'vacancies_processed': len(salaries),
+        'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
+        'vacancies_found': vacancies_total,
+    }
+    return vacancies_statistics
 
 
 def generate_table(statistics_vacancies):
