@@ -21,41 +21,33 @@ def check_division_by_zero(first_number, second_number):
 
 
 def statistics_salary_for_hh(languages, hh_token, city_id):
-    statistics_vacancies_hh = {}
-    for language in languages:
-        salaries = []
-        hh_address = 'https://api.hh.ru/vacancies/'
-        payload = {
-            'text': language,
-            'area': city_id,
-            'period': '30',
-            'api_key': hh_token,
+    salaries = []
+    hh_address = 'https://api.hh.ru/vacancies/'
+    payload = {
+        'text': language,
+        'area': city_id,
+        'period': '30',
+        'api_key': hh_token,
+    }
+    response = requests.get(hh_address, params=payload)
+    vacancies_response = response.json()
+    vacancies = vacancies_response['items']
+    found = vacancies_response['found']
+    pages = vacancies_response['pages']
+    page = 0
+    while page < pages:
+        page += 1
+        for vacancy in vacancies:
+            if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
+                min_salary = vacancy['salary']['from']
+                max_salary = vacancy['salary']['to']
+                salaries.append(predict_rub_salary(min_salary, max_salary))
+    vacancies_statistics = {
+            'vacancies_processed': len(salaries),
+            'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
+            'vacancies_found': found,
         }
-        response = requests.get(hh_address, params=payload)
-        resp_json = response.json()
-        vacancies = resp_json['items']
-        found = resp_json['found']
-        pages = resp_json['pages']
-        page = 0
-        vacancies_info = {
-            'vacancies_processed': '',
-            'average_salary': '',
-            'vacancies_found': '',
-        }
-        while page < pages:
-            page += 1
-            for vacancy in vacancies:
-                if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
-                    if vacancy['salary']['currency'] == 'RUR':
-                        min_salary = vacancy['salary']['from']
-                        max_salary = vacancy['salary']['to']
-                        salaries.append(predict_rub_salary(min_salary, max_salary))
-        vacancies_info['average_salary'] = check_division_by_zero(sum(salaries),
-                                                                  len(salaries))
-        vacancies_info['vacancies_processed'] = len(salaries)
-        vacancies_info['vacancies_found'] = found
-        statistics_vacancies_hh[language] = vacancies_info
-    return statistics_vacancies_hh
+    return vacancies_statistics
 
 
 def get_sj_page(language, super_job_token, page, town):
