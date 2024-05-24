@@ -27,7 +27,7 @@ def get_statistics_for_all_languages_by_hh(languages, hh_token, city_id):
     return statistics_vacancies_hh
 
 
-def statistics_salary_for_hh(language, hh_token, city_id):
+def get_statistics_salary_for_hh(language, hh_token, city_id):
     salaries = []
     hh_address = 'https://api.hh.ru/vacancies/'
     payload = {
@@ -64,7 +64,7 @@ def get_statistics_for_all_languages_by_sj(languages, hh_token, city_id):
     return statistics_vacancies_sj
 
 
-def statistics_salary_for_super_job(language, super_job_token, city_id):
+def get_statistics_salary_for_super_job(language, super_job_token, city_id):
     salaries = []
     url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
     headers = {
