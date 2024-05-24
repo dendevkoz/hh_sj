@@ -23,7 +23,7 @@ def check_division_by_zero(first_number, second_number):
 def get_statistics_for_all_languages_by_hh(languages, hh_token, city_id):
     statistics_vacancies_hh = {}
     for language in languages:
-        statistics_vacancies_hh[language] = statistics_salary_for_hh(language, hh_token, city_id)
+        statistics_vacancies_hh[language] = get_statistics_salary_for_hh(language, hh_token, city_id)
     return statistics_vacancies_hh
 
 
