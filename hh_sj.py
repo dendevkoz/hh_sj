@@ -60,7 +60,7 @@ def get_statistics_salary_for_hh(language, hh_token, city_id):
 def get_statistics_for_all_languages_by_sj(languages, sj_token, city_id):
     statistics_vacancies_sj = {}
     for language in languages:
-        statistics_vacancies_sj[language] = statistics_salary_for_sj(language, sj_token, city_id)
+        statistics_vacancies_sj[language] = get_statistics_salary_for_super_job(language, sj_token, city_id)
     return statistics_vacancies_sj
 
 
