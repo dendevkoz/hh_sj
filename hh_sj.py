@@ -20,34 +20,54 @@ def check_division_by_zero(first_number, second_number):
         return answer
 
 
-def get_statistics_salary_for_hh(language, hh_token, city_id):
-    salaries = []
-    hh_address = 'https://api.hh.ru/vacancies/'
-    payload = {
-        'text': language,
-        'area': city_id,
-        'period': '30',
-        'api_key': hh_token,
-    }
-    response = requests.get(hh_address, params=payload)
-    vacancies_response = response.json()
-    vacancies = vacancies_response['items']
-    found = vacancies_response['found']
-    pages = vacancies_response['pages']
-    page = 0
-    while page < pages:
-        page += 1
-        for vacancy in vacancies:
-            if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
-                min_salary = vacancy['salary']['from']
-                max_salary = vacancy['salary']['to']
-                salaries.append(predict_rub_salary(min_salary, max_salary))
-    vacancies_statistics = {
-            'vacancies_processed': len(salaries),
-            'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
-            'vacancies_found': found,
+def get_statistics_salary_for_hh(languages, hh_token, city_id):
+    statistics_vacancies_hh = {}
+    for language in languages:
+        hh_address = 'https://api.hh.ru/vacancies/'
+        payload = {
+            'text': language,
+            'area': city_id,
+            'period': '30',
+            'api_key': hh_token,
         }
-    return vacancies_statistics
+        salaries = []
+        response = requests.get(hh_address, params=payload)
+        vacancies_response = response.json()
+        found = vacancies_response['found']
+        pages = vacancies_response['pages']
+        page = 1
+        while page < pages:
+            payload = {
+                'professional_roles': [
+                    {
+                        'id': '96',
+                        'name': 'Программист, разработчик'
+                    }
+                ],
+                'text': language,
+                'area': city_id,
+                'period': '30',
+                'api_key': hh_token,
+                'page': page
+            }
+            vacancies_from_one_page = requests.get(hh_address, params=payload)
+            with suppress(KeyError):
+                vacancies = vacancies_from_one_page.json()['items']
+            page += 1
+            for vacancy in vacancies:
+                if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
+                    min_salary = vacancy['salary']['from']
+                    max_salary = vacancy['salary']['to']
+                    salaries.append(predict_rub_salary(min_salary, max_salary))
+        vacancies_statistics = {
+                'vacancies_processed': len(salaries),
+                'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
+                'vacancies_found': found,
+            }
+        sleep(5)
+        statistics_vacancies_hh[language] = vacancies_statistics
+    return statistics_vacancies_hh
+
 
 
 def get_statistics_for_all_languages_by_sj(languages, sj_token, city_id):
