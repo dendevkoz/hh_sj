@@ -72,14 +72,6 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id):
     return statistics_vacancies_hh
 
 
-
-def get_statistics_for_all_languages_by_sj(languages, sj_token, city_id):
-    statistics_vacancies_sj = {}
-    for language in languages:
-        statistics_vacancies_sj[language] = get_statistics_salary_for_super_job(language, sj_token, city_id)
-    return statistics_vacancies_sj
-
-
 def get_statistics_salary_for_super_job(language, super_job_token, city_id):
     salaries = []
     url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
@@ -132,7 +124,7 @@ if __name__ == "__main__":
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
 
-    all_statistics_for_sj = get_statistics_for_all_languages_by_sj(programming_languages,
+    all_statistics_for_sj = get_statistics_salary_for_super_job(programming_languages,
                                                                    secret_key_super_job,
                                                                    city_id_for_sj)
     title_sj = "SuperJob (Moscow)"
