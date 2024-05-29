@@ -72,35 +72,36 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id):
     return statistics_vacancies_hh
 
 
-def get_statistics_salary_for_super_job(language, super_job_token, city_id):
-    salaries = []
-    url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
-    headers = {
-        'X-Api-App-Id': super_job_token
-    }
-    payload = {
-        'town': city_id,
-        'keyword': language,
-        'vacancies_filter': 'it-internet-svyaz-telekom',
-        'more': True,
-    }
-    response = requests.get(url, headers=headers, params=payload)
-    response.raise_for_status()
-    vacancies_response = response.json()
-    vacancies_total = vacancies_response['total']
-    if vacancies_response['more'] is True:
+def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
+    statistics_vacancies_sj = {}
+    for language in languages:
+        salaries = []
+        url = 'https://api.superjob.ru/2.0/vacancies/catalogues/'
+        headers = {
+            'X-Api-App-Id': super_job_token
+        }
+        payload = {
+            'town': city_id,
+            'keyword': language,
+            'vacancies_filter': 'it-internet-svyaz-telekom',
+        }
+        response = requests.get(url, headers=headers, params=payload)
+        response.raise_for_status()
+        vacancies_response = response.json()
+        vacancies_total = vacancies_response['total']
         vacancies = vacancies_response['objects']
         for vacancy in vacancies:
             min_salary = vacancy['payment_from']
             max_salary = vacancy['payment_to']
             if min_salary and max_salary:
                 salaries.append(predict_rub_salary(min_salary, max_salary))
-    vacancies_statistics = {
-        'vacancies_processed': len(salaries),
-        'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
-        'vacancies_found': vacancies_total,
-    }
-    return vacancies_statistics
+        vacancies_statistics = {
+            'vacancies_processed': len(salaries),
+            'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
+            'vacancies_found': vacancies_total,
+        }
+        statistics_vacancies_sj[language] = vacancies_statistics
+    return statistics_vacancies_sj
 
 
 def generate_table(statistics_vacancies):
@@ -125,8 +126,8 @@ if __name__ == "__main__":
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
 
     all_statistics_for_sj = get_statistics_salary_for_super_job(programming_languages,
-                                                                   secret_key_super_job,
-                                                                   city_id_for_sj)
+                                                                secret_key_super_job,
+                                                                city_id_for_sj)
     title_sj = "SuperJob (Moscow)"
     table = generate_table(all_statistics_for_sj)
     table_statistics_sj = DoubleTable(table, title_sj)
