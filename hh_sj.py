@@ -22,14 +22,14 @@ def check_division_by_zero(dividend, divisor):
         return answer
 
 
-def get_statistics_salary_for_hh(languages, hh_token, city_id):
+def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_id, min_timeout):
     statistics_vacancies_hh = {}
     for language in languages:
         hh_address = 'https://api.hh.ru/vacancies/'
         payload = {
             'text': language,
             'area': city_id,
-            'period': '30',
+            'period': period,
             'api_key': hh_token,
         }
         salaries = []
@@ -42,7 +42,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id):
             payload = {
                 'professional_roles': [
                     {
-                        'id': '96',
+                        'id': vacancy_id ,
                         'name': 'Программист, разработчик'
                     }
                 ],
@@ -66,7 +66,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id):
                 'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
                 'vacancies_found': found,
             }
-        sleep(5)
+        sleep(min_timeout)
         statistics_vacancies_hh[language] = vacancies_statistics
     return statistics_vacancies_hh
 
@@ -138,6 +138,9 @@ if __name__ == "__main__":
     secret_key_super_job = os.getenv("SUPER_JOB_SECRET_KEY")
     secret_key_hh = os.getenv("HH_SECRET_KEY")
     programming_languages = ('Python', 'C', 'C++', 'C#', 'Javascript', 'Java', 'PHP', 'Go')
+    period = '30'
+    vacancy_id = '96'
+    min_timeout = 5
 
     all_statistics_for_sj = get_statistics_salary_for_super_job(programming_languages,
                                                                 secret_key_super_job,
@@ -147,7 +150,11 @@ if __name__ == "__main__":
     table_statistics_sj = DoubleTable(table, title_sj)
     print(table_statistics_sj.table)
 
-    all_statistics_for_hh = get_statistics_salary_for_hh(programming_languages, secret_key_hh, city_id_for_hh)
+    all_statistics_for_hh = get_statistics_salary_for_hh(programming_languages,
+                                                         secret_key_hh,
+                                                         city_id_for_hh,
+                                                         period, vacancy_id, 
+                                                         min_timeout)
     title_hh = "HeadHunter (Moscow)"
     table = generate_table(all_statistics_for_hh)
     table_statistics_hh = DoubleTable(table, title_hh)
