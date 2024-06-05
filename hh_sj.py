@@ -36,9 +36,9 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
         response = requests.get(hh_address, params=payload)
         response.raise_for_status()
         vacancies_response = response.json()
-        found = vacancies_response['found']
         pages = vacancies_response['pages']
         page = 1
+        found = 0
         while page < pages:
             payload = {
                 'professional_roles': [
@@ -49,21 +49,23 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                 ],
                 'text': language,
                 'area': city_id,
-                'period': '30',
+                'period': period,
                 'api_key': hh_token,
                 'page': page
             }
             vacancies_from_one_page = requests.get(hh_address, params=payload)
-            vacancies_from_one_page.raise_for_status()
             with suppress(KeyError):
                 vacancies = vacancies_from_one_page.json()['items']
             page += 1
             for vacancy in vacancies:
+                found += 1
                 if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
                     min_salary = vacancy['salary']['from']
                     max_salary = vacancy['salary']['to']
-                    if min_salary > 0 or max_salary > 0:
-                        salaries.append(predict_rub_salary(min_salary, max_salary))
+                    if min_salary or max_salary:
+                        salary = predict_rub_salary(min_salary, max_salary)
+                        if salary != 0:
+                            salaries.append(salary)
         vacancies_statistics = {
                 'vacancies_processed': len(salaries),
                 'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
