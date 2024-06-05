@@ -16,9 +16,9 @@ def predict_rub_salary(min_salary, max_salary):
         return int(min_salary * 1.2)
 
 
-def check_division_by_zero(first_number, second_number):
+def check_division_by_zero(dividend, divisor):
     with suppress(ZeroDivisionError):
-        answer = int(first_number / second_number)
+        answer = int(dividend / divisor)
         return answer
 
 
