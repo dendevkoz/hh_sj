@@ -17,10 +17,9 @@ def predict_rub_salary(min_salary, max_salary):
 
 
 def check_division_by_zero(first_number, second_number):
-    if first_number > 0:
-        with suppress(ZeroDivisionError):
-            answer = int(first_number / second_number)
-            return answer
+    with suppress(ZeroDivisionError):
+        answer = int(first_number / second_number)
+        return answer
 
 
 def get_statistics_salary_for_hh(languages, hh_token, city_id):
