@@ -84,15 +84,7 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
         headers = {
             'X-Api-App-Id': super_job_token
         }
-        payload = {
-            'town': city_id,
-            'keyword': language,
-            'vacancies_filter': 'it-internet-svyaz-telekom',
-        }
-        response = requests.get(url, headers=headers, params=payload)
-        response.raise_for_status()
-        vacancies_response = response.json()
-        vacancies_total = vacancies_response['total']
+        vacancies_total = 0
         value_check = 0
         page = 0
         while value_check < 1:
@@ -107,10 +99,13 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
             vacancies_response = response.json()
             vacancies = vacancies_response['objects']
             for vacancy in vacancies:
+                vacancies_total += 1
                 min_salary = vacancy['payment_from']
                 max_salary = vacancy['payment_to']
-                if min_salary > 0 or max_salary > 0:
-                    salaries.append(predict_rub_salary(min_salary, max_salary))
+                if min_salary or max_salary:
+                    salary = predict_rub_salary(min_salary, max_salary)
+                    if salary != 0:
+                        salaries.append(salary)
             page += 1
             if vacancies_response['more'] is False:
                 value_check += 1
