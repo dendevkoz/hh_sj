@@ -62,7 +62,8 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                 if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
                     min_salary = vacancy['salary']['from']
                     max_salary = vacancy['salary']['to']
-                    salaries.append(predict_rub_salary(min_salary, max_salary))
+                    if min_salary > 0 or max_salary > 0:
+                        salaries.append(predict_rub_salary(min_salary, max_salary))
         vacancies_statistics = {
                 'vacancies_processed': len(salaries),
                 'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
@@ -106,7 +107,7 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
             for vacancy in vacancies:
                 min_salary = vacancy['payment_from']
                 max_salary = vacancy['payment_to']
-                if min_salary or max_salary:
+                if min_salary > 0 or max_salary > 0:
                     salaries.append(predict_rub_salary(min_salary, max_salary))
             page += 1
             if vacancies_response['more'] is False:
