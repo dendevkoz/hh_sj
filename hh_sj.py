@@ -34,6 +34,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
         }
         salaries = []
         response = requests.get(hh_address, params=payload)
+        response.raise_for_status()
         vacancies_response = response.json()
         found = vacancies_response['found']
         pages = vacancies_response['pages']
@@ -53,6 +54,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                 'page': page
             }
             vacancies_from_one_page = requests.get(hh_address, params=payload)
+            vacancies_from_one_page.raise_for_status()
             with suppress(KeyError):
                 vacancies = vacancies_from_one_page.json()['items']
             page += 1
