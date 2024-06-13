@@ -85,9 +85,8 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
             'X-Api-App-Id': super_job_token
         }
         vacancies_total = 0
-        value_check = 0
         page = 0
-        while value_check < 1:
+        while True:
             payload = {
                 'town': city_id,
                 'keyword': language,
@@ -107,8 +106,8 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
                     if not salary:
                         salaries.append(salary)
             page += 1
-            if vacancies_response['more'] is False:
-                value_check += 1
+            if not vacancies_response['more']:
+                break
         vacancies_statistics = {
             'vacancies_processed': len(salaries),
             'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
