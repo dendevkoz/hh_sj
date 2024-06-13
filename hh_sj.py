@@ -37,8 +37,8 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
         response.raise_for_status()
         vacancies_response = response.json()
         pages = vacancies_response['pages']
+        found = vacancies_response['found']
         page = 1
-        found = 0
         while page < pages:
             payload = {
                 'professional_roles': [
@@ -58,7 +58,6 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                 vacancies = vacancies_from_one_page.json()['items']
             page += 1
             for vacancy in vacancies:
-                found += 1
                 if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
                     min_salary = vacancy['salary']['from']
                     max_salary = vacancy['salary']['to']
@@ -84,7 +83,15 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
         headers = {
             'X-Api-App-Id': super_job_token
         }
-        vacancies_total = 0
+        payload = {
+            'town': city_id,
+            'keyword': language,
+            'vacancies_filter': 'it-internet-svyaz-telekom',
+        }
+        response = requests.get(url, headers=headers, params=payload)
+        response.raise_for_status()
+        vacancies_response = response.json()
+        vacancies_total = vacancies_response['total']
         page = 0
         while True:
             payload = {
@@ -98,7 +105,6 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
             vacancies_response = response.json()
             vacancies = vacancies_response['objects']
             for vacancy in vacancies:
-                vacancies_total += 1
                 min_salary = vacancy['payment_from']
                 max_salary = vacancy['payment_to']
                 if min_salary or max_salary:
