@@ -25,40 +25,30 @@ def check_division_by_zero(dividend, divisor):
 def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_id, min_timeout):
     statistics_vacancies_hh = {}
     for language in languages:
+        salaries = []
+        page = 0
         hh_address = 'https://api.hh.ru/vacancies/'
         payload = {
+            'professional_roles': [
+                {
+                    'id': vacancy_id,
+                    'name': 'Программист, разработчик'
+                }
+            ],
             'text': language,
             'area': city_id,
             'period': period,
             'api_key': hh_token,
+            'page': page
         }
-        salaries = []
         response = requests.get(hh_address, params=payload)
         response.raise_for_status()
-        vacancies_response = response.json()
-        pages = vacancies_response['pages']
-        found = vacancies_response['found']
-        page = 1
-        while page < pages:
-            payload = {
-                'professional_roles': [
-                    {
-                        'id': vacancy_id ,
-                        'name': 'Программист, разработчик'
-                    }
-                ],
-                'text': language,
-                'area': city_id,
-                'period': period,
-                'api_key': hh_token,
-                'page': page
-            }
-            response = requests.get(hh_address, params=payload)
-            response.raise_for_status()
-            vacancies_from_one_page = response.json()
+        vacancies_from_one_page = response.json()
+        pages = vacancies_from_one_page['pages']
+        found = vacancies_from_one_page['found']
+        while page <= pages:
             with suppress(KeyError):
                 vacancies = vacancies_from_one_page['items']
-                page += 1
                 for vacancy in vacancies:
                     if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
                         min_salary = vacancy['salary']['from']
@@ -67,6 +57,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                             salary = predict_rub_salary(min_salary, max_salary)
                             if salary:
                                 salaries.append(salary)
+                page += 1
         vacancies_statistics = {
                 'vacancies_processed': len(salaries),
                 'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
