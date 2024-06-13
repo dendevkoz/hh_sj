@@ -64,7 +64,7 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                     max_salary = vacancy['salary']['to']
                     if min_salary or max_salary:
                         salary = predict_rub_salary(min_salary, max_salary)
-                        if salary != 0:
+                        if not salary:
                             salaries.append(salary)
         vacancies_statistics = {
                 'vacancies_processed': len(salaries),
@@ -104,7 +104,7 @@ def get_statistics_salary_for_super_job(languages, super_job_token, city_id):
                 max_salary = vacancy['payment_to']
                 if min_salary or max_salary:
                     salary = predict_rub_salary(min_salary, max_salary)
-                    if salary != 0:
+                    if not salary:
                         salaries.append(salary)
             page += 1
             if vacancies_response['more'] is False:
