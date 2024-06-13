@@ -58,15 +58,15 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
             vacancies_from_one_page = response.json()
             with suppress(KeyError):
                 vacancies = vacancies_from_one_page['items']
-            page += 1
-            for vacancy in vacancies:
-                if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
-                    min_salary = vacancy['salary']['from']
-                    max_salary = vacancy['salary']['to']
-                    if min_salary or max_salary:
-                        salary = predict_rub_salary(min_salary, max_salary)
-                        if salary:
-                            salaries.append(salary)
+                page += 1
+                for vacancy in vacancies:
+                    if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
+                        min_salary = vacancy['salary']['from']
+                        max_salary = vacancy['salary']['to']
+                        if min_salary or max_salary:
+                            salary = predict_rub_salary(min_salary, max_salary)
+                            if salary:
+                                salaries.append(salary)
         vacancies_statistics = {
                 'vacancies_processed': len(salaries),
                 'average_salary': check_division_by_zero(sum(salaries), len(salaries)),
