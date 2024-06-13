@@ -53,9 +53,11 @@ def get_statistics_salary_for_hh(languages, hh_token, city_id, period, vacancy_i
                 'api_key': hh_token,
                 'page': page
             }
-            vacancies_from_one_page = requests.get(hh_address, params=payload)
+            response = requests.get(hh_address, params=payload)
+            response.raise_for_status()
+            vacancies_from_one_page = response.json()
             with suppress(KeyError):
-                vacancies = vacancies_from_one_page.json()['items']
+                vacancies = vacancies_from_one_page['items']
             page += 1
             for vacancy in vacancies:
                 if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
